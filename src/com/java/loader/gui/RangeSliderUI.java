@@ -22,6 +22,7 @@ public class RangeSliderUI extends BasicSliderUI {
     private boolean upperThumbSelected;
     private transient boolean lowerPressed;
     private transient boolean upperPressed;
+    private Shape cachedThumbShape;
 
     public RangeSliderUI(RangeSlider b) {
         super(b);
@@ -100,7 +101,8 @@ public class RangeSliderUI extends BasicSliderUI {
             if (clipRect.intersects(upperThumbRect)) {
                 paintUpperThumb(g);
             }
-        } else {
+        }
+        else {
             if (clipRect.intersects(upperThumbRect)) {
                 paintUpperThumb(g);
             }
@@ -151,11 +153,13 @@ public class RangeSliderUI extends BasicSliderUI {
         int w = knobBounds.width;
         int h = knobBounds.height;
         Graphics2D g2d = (Graphics2D) g.create();
-        Shape thumbShape = createThumbShape(w - 1, h - 1);
+        if (cachedThumbShape == null) {
+            cachedThumbShape = createThumbShape(w - 1, h - 1);
+        }
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.translate(knobBounds.x, knobBounds.y);
         g2d.setColor(new Color(255, 199, 60));
-        g2d.fill(thumbShape);
+        g2d.fill(cachedThumbShape);
         g2d.dispose();
     }
 
@@ -164,11 +168,13 @@ public class RangeSliderUI extends BasicSliderUI {
         int w = knobBounds.width;
         int h = knobBounds.height;
         Graphics2D g2d = (Graphics2D) g.create();
-        Shape thumbShape = createThumbShape(w - 1, h - 1);
+        if (cachedThumbShape == null) {
+            cachedThumbShape = createThumbShape(w - 1, h - 1);
+        }
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.translate(knobBounds.x, knobBounds.y);
         g2d.setColor(new Color(216, 73, 63));
-        g2d.fill(thumbShape);
+        g2d.fill(cachedThumbShape);
         g2d.dispose();
     }
 
@@ -212,10 +218,8 @@ public class RangeSliderUI extends BasicSliderUI {
     public class RangeSliderChangeListener implements ChangeListener {
         @Override
         public void stateChanged(ChangeEvent e) {
-            if (!lowerPressed && !upperPressed) {
-                calculateThumbLocation();
-                slider.repaint();
-            }
+            calculateThumbLocation();
+            slider.repaint();
         }
     }
 
