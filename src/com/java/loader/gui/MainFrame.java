@@ -93,11 +93,13 @@ public final class MainFrame extends JFrame {
         getContentPane().add(logoLabel);
 
         VeneState.setStateListener(active -> {
-            if (active) {
-                logoLabel.setIcon(new ImageIcon(logoActive));
-            } else {
-                logoLabel.setIcon(new ImageIcon(logoInactive));
-            }
+            SwingUtilities.invokeLater(() -> {
+                if (active) {
+                    logoLabel.setIcon(new ImageIcon(logoActive));
+                } else {
+                    logoLabel.setIcon(new ImageIcon(logoInactive));
+                }
+            });
         });
 
         // Top Buttons (Destruct/Settings)
@@ -114,9 +116,18 @@ public final class MainFrame extends JFrame {
         destructBtn.setBorderPainted(false);
         destructBtn.setToolTipText("Self-destruct");
         destructBtn.addActionListener(e -> {
-            // Destruct logic: delete files and exit
-            new File("config.txt").delete();
-            System.exit(0);
+            int result = JOptionPane.showConfirmDialog(
+                this,
+                "Are you sure you want to self-destruct?",
+                "Self-Destruct",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE
+            );
+            
+            if (result == JOptionPane.YES_OPTION) {
+                new File("config.txt").delete();
+                System.exit(0);
+            }
         });
         topBtnPanel.add(destructBtn);
 
